@@ -1,6 +1,8 @@
 package com.thoughtworks;
 
-public class Transaction {
+import java.util.Objects;
+
+public class Transaction implements Comparable<Transaction>{
 
   private final Trader trader;
   private final int year;
@@ -27,5 +29,23 @@ public class Transaction {
   public String toString() {
     return "{" + this.trader + ", " +
         "year: " + this.year + ", " + "value:" + this.value + "}";
+  }
+
+  @Override
+  public int compareTo(Transaction o) {
+    return this.getValue() - o.getValue();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Transaction)) return false;
+    Transaction that = (Transaction) o;
+    return Objects.equals(trader.getCity(), that.trader.getCity());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(trader.getCity());
   }
 }
