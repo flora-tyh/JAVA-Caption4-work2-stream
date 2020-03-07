@@ -62,10 +62,8 @@ public class App {
 
   public static List<Trader> getCambridgeTraders(List<Transaction> transactions) {
     List<Trader> traders = new ArrayList<>();
-    List<Trader> finalTraders = traders;
-    transactions.stream().filter((Transaction t) -> t.getTrader().getCity() == "Cambridge")
-                         .forEach((Transaction t) -> finalTraders.add(t.getTrader()));
-    traders = finalTraders.stream().distinct().collect(Collectors.toList());
+    traders = transactions.stream().filter((Transaction t) -> t.getTrader().getCity() == "Cambridge")
+                         .map((Transaction t) -> t.getTrader()).distinct().collect(Collectors.toList());
     Collections.sort(traders);
     return traders;
   }
