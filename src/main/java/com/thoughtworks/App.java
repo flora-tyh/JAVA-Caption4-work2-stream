@@ -1,9 +1,6 @@
 package com.thoughtworks;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,55 +45,44 @@ public class App {
   }
 
   public static List<Transaction> get2011Transactions(List<Transaction> transactions) {
-    Stream<Transaction> transactions1 = transactions.stream().filter((Transaction t) -> t.getYear() == 2011);
-    List<Transaction> transactionList = transactions1.collect(Collectors.toList());
-    Collections.sort(transactionList);
-    return transactionList;
+    Stream<Transaction> transactions1 = transactions.stream().filter((Transaction t) -> t.getYear() == 2011).sorted();
+    return transactions1.collect(Collectors.toList());
   }
 
   public static List<String> getTradersCity(List<Transaction> transactions) {
-    List<String> cities = new ArrayList<>();
-    transactions.stream().distinct().forEach((Transaction t) -> cities.add(t.getTrader().getCity()));
-    return cities;
+    Stream<String> cities = transactions.stream().distinct().map((Transaction t) -> t.getTrader().getCity());
+    return cities.collect(Collectors.toList());
   }
 
   public static List<Trader> getCambridgeTraders(List<Transaction> transactions) {
-    List<Trader> traders = new ArrayList<>();
-    traders = transactions.stream().filter((Transaction t) -> t.getTrader().getCity() == "Cambridge")
-                         .map((Transaction t) -> t.getTrader()).distinct().collect(Collectors.toList());
-    Collections.sort(traders);
+    List<Trader> traders = transactions.stream().filter((Transaction t) -> t.getTrader().getCity().equals("Cambridge"))
+                         .map(Transaction::getTrader).distinct().sorted().collect(Collectors.toList());
     return traders;
   }
 
   public static List<String> getTradersName(List<Transaction> transactions) {
-    List<String> names = new ArrayList<>();
-    List<Trader> traders = new ArrayList<>();
-    transactions.stream().forEach((Transaction t) -> traders.add(t.getTrader()));
-    Collections.sort(traders);
-    traders.stream().distinct().forEach((Trader t) -> names.add(t.getName()));
+    List<String> names = transactions.stream().map(Transaction::getTrader).sorted().distinct().map(Trader::getName).collect(Collectors.toList());
     return names;
   }
 
   public static boolean hasMilanTrader(List<Transaction> transactions) {
-    boolean hasMilan = transactions.stream().filter((Transaction t) -> t.getTrader().getCity() == "Milan")
-                                      .collect(Collectors.toList()).size() != 0;
+    boolean hasMilan = transactions.stream().anyMatch((Transaction t) -> t.getTrader().getCity().equals("Milan"));
     return hasMilan;
   }
 
   public static List<Integer> getCambridgeTransactionsValue(List<Transaction> transactions) {
-    List<Integer> cambridgeValue = new ArrayList<>();
-    transactions.stream().filter((Transaction t) -> t.getTrader().getCity() == "Cambridge")
-            .forEach((Transaction t) -> cambridgeValue.add(t.getValue()));
+    List<Integer> cambridgeValue = transactions.stream().filter((Transaction t) -> t.getTrader().getCity() == "Cambridge")
+                                                        .map(Transaction::getValue).collect(Collectors.toList());
     return cambridgeValue;
   }
 
   public static int getMaxTransactionValue(List<Transaction> transactions) {
-    Collections.sort(transactions);
-    return transactions.get(transactions.size() - 1).getValue();
+    int maxValue = transactions.stream().max(Comparator.comparing(Transaction::getValue)).get().getValue();
+    return maxValue;
   }
 
   public static Transaction getMinTransaction(List<Transaction> transactions) {
-    Collections.sort(transactions);
-    return transactions.get(0);
+    Transaction minTransaction = transactions.stream().min(Comparator.comparing(Transaction::getValue)).get();
+    return minTransaction;
   }
 }
